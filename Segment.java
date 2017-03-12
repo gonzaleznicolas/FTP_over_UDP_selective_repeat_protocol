@@ -17,7 +17,7 @@ import java.net.*;
  * The max segment size is given by MAX_SEGMENT_SIZE 
  * 
  * @author 	Majid Ghaderi
-   @author 	Cyrac James
+ * @author 	Cyrac James
  * @version	2.2, Jan 01, 2017
  *
  */

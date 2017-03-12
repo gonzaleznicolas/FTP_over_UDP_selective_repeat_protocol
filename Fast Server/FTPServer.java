@@ -56,7 +56,7 @@ public class FTPServer extends Thread
     {
       for (;;)
       {
-        byte[] arrayOfByte = new byte['Ϭ'];
+        byte[] arrayOfByte = new byte[10000];
         
         DatagramPacket localDatagramPacket = new DatagramPacket(arrayOfByte, arrayOfByte.length);
         udpSocket.receive(localDatagramPacket);

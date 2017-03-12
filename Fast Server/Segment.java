@@ -35,7 +35,7 @@ public class Segment
 {
   public static final int HEADER_SIZE = 4;
   public static final int MAX_PAYLOAD_SIZE = 1000;
-  public static final int MAX_SEGMENT_SIZE = 1004;
+  public static final int MAX_SEGMENT_SIZE = HEADER_SIZE + MAX_SEGMENT_SIZE;
   private int seqNum;
   private byte[] payload;
   
@@ -232,11 +232,11 @@ public class Segment
 
   public static void main(String[] paramArrayOfString)
   {
-    byte[] arrayOfByte1 = new byte['Ϩ'];
+    byte[] arrayOfByte1 = new byte[MAX_PAYLOAD_SIZE];
     
     Arrays.fill(arrayOfByte1, (byte)0);
     arrayOfByte1[0] = 1;
-    arrayOfByte1['ϧ'] = 1;
+    arrayOfByte1[MAX_PAYLOAD_SIZE-1] = 1;
     
 
     Segment localSegment1 = new Segment(1, arrayOfByte1);
