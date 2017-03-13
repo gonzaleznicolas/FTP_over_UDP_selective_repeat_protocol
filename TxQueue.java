@@ -5,7 +5,8 @@ import java.util.concurrent.locks.*;
  * TxQueue Class
  * 
  * TxQueue implements a queue of nodes (contaning segment) using a link list. The nodes are stored in increasing order of segment sequence number
- * A node item is inserted into the queue based on segment sequence number, while items are ALWAYS removed from the 'head' of the queue. Neverteless, for the sender, a new node is always added at the end. The implementation is generic to incorporate receiver side queue.
+ * A node item is inserted into the queue based on segment sequence number, while items are ALWAYS removed from the 'head' of the queue. Neverteless, 
+ * for the sender, a new node is always added at the end. The implementation is generic to incorporate receiver side queue.
  * The next segment to be removed is at the 'head'.
  * 
  * This is a blocking implementation:

@@ -25,6 +25,8 @@ public class FastClient {
     private int window;
     private int timeOut;
 
+    private TxQueue senderQueue;
+
     private String fileName;
 
     private Socket tcpSocketConnectingToServer;
@@ -47,6 +49,8 @@ public class FastClient {
         serverPort = server_port;
         window = window;
         timeOut = timeout;
+
+        senderQueue = new TxQueue(window);
     }
     
     /* send file */
@@ -138,13 +142,33 @@ public class FastClient {
             }
             if (arrayOfChunks[arrayOfChunks.length-1].length == 0)
                 arrayOfChunks = Arrays.copyOf(arrayOfChunks, arrayOfChunks.length-1);
-            System.out.println(Arrays.deepToString(arrayOfChunks));
+            //System.out.println(Arrays.deepToString(arrayOfChunks));
 
 
             // at this point, arrayOfChunks is an array of arrays of bytes. all of those bytes together are the file.
             // all of the arrays are MAX_PAYLOAD_SIZE in length, except for the last one which may be smaller.
 
             // TRANSFER ALL THE CHUNKS OVER UDP USING selective repeat protocol
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         }
