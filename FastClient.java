@@ -278,7 +278,15 @@ public class FastClient {
             return; // if the timeout that happened is for a segment which has already been acknowledged,ignore the timeout
         else if (test.getStatus() == TxQueueNode.SENT)      // if the timeout happened for a Segment in the current window and it has not yet been acked
         {
-            // resend the segment #seqNum and schedule a timertask for this segment
+
+            // resend the segment #seqNum
+            Segment segToSend = new Segment(seqNum, arrayOfChunks[seqNum]);
+            DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, serverIP, serverPort);
+            try{ udpSocketConnectingToServer.send(pktToSend);}
+            catch (IOException e){ System.out.println("There was an excepion sending the packet."); System.exit(0);}
+
+            // schedule a timer task for the segment
+
         }
     }
 
