@@ -174,7 +174,13 @@ public class FastClient {
             AckReceiver ackReceivingThread = new AckReceiver(this);  // give this thread this FastClient object so it can access the methods
             ackReceivingThread.start();
 
-            // YOU ARE ON STEP THREE OF THE ALGORITHM ON THE DESIGN NOTES
+            // send packets. the main thread (this one) only has to send each segement once. if there is loss, the time out handler will take care
+            // of retransmitting the segment. we know we have arrayOfChunks.length segments to send
+            for (int i = 0; i< arrayOfChunks.length; i++)
+            {
+
+            }
+
 
 
 
@@ -257,13 +263,23 @@ public class FastClient {
 
     public synchronized void processTime(int seqNum)
     {
-        // Keeping track of timer tasks for each segment may
-        // be difficult. An easier way is to check whether the
+        // this method will be called when a timer expires. the sequence number of the segment
+        // whose timer expired is seqNum. check whether the
         // time-out happened for a segment that belongs
         // to the current window and not yet acknowledged.
         // If yes => then resend the segment and schedule
         // timer task for the segment.
         // Otherwise => ignore the time-out event.
+
+        TxQueueNode test = senderQueue.getNode(seqNum);
+        if (test == null)
+            return;  // if null was returned it means Segment with sequence number seqNum is not in the queue/window. so ignore the timeout event
+        else if (test.getStatus() == TxQueueNode.ACKNOWLEDGED)
+            return; // if the timeout that happened is for a segment which has already been acknowledged,ignore the timeout
+        else if (test.getStatus() == TxQueueNode.SENT)      // if the timeout happened for a Segment in the current window and it has not yet been acked
+        {
+            // resend the segment #seqNum and schedule a timertask for this segment
+        }
     }
 
 
