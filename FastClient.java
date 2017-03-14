@@ -24,6 +24,7 @@ public class FastClient {
     private int serverPort;
     private int window;
     private int timeOut;
+    byte[][] arrayOfChunks = {};
 
     private TxQueue senderQueue;
     private InetAddress serverIP;
@@ -92,7 +93,7 @@ public class FastClient {
             FileInputStream fin = null;
             File f = null;
             boolean bytesLeftToRead = true;
-            byte[][] arrayOfChunks = {};
+            //byte[][] arrayOfChunks = {};
             byte[] dataFromFile = new byte[Segment.MAX_PAYLOAD_SIZE];
             byte[] temp1; // a temporary array
             try
