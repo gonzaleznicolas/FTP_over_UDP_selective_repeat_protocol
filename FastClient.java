@@ -26,12 +26,18 @@ public class FastClient {
     private int timeOut;
 
     private TxQueue senderQueue;
+    private InetAddress serverIP;
 
     private String fileName;
 
     private Socket tcpSocketConnectingToServer;
     private DataInputStream tcpInputStreamFromServer;
     private DataOutputStream tcpOutputStreamToServer;
+
+    public DatagramSocket udpSocketConnectingToServer;
+    private Timer timer;
+
+    public boolean allSegmentsAcked;
 
 
      /**
@@ -51,15 +57,17 @@ public class FastClient {
         timeOut = timeout;
 
         senderQueue = new TxQueue(window);
+        allSegmentsAcked = false;
     }
     
     /* send file */
     public void send(String file_name)
     {
         this.fileName = file_name;
-            
+        
         try
         {
+
             // INITIALIZE TCP STREAMS AND SOCKET
             tcpSocketConnectingToServer = new Socket(serverName, serverPort);
             tcpInputStreamFromServer = new DataInputStream(tcpSocketConnectingToServer.getInputStream());
@@ -148,11 +156,25 @@ public class FastClient {
             // at this point, arrayOfChunks is an array of arrays of bytes. all of those bytes together are the file.
             // all of the arrays are MAX_PAYLOAD_SIZE in length, except for the last one which may be smaller.
 
+
+
             // TRANSFER ALL THE CHUNKS OVER UDP USING selective repeat protocol
 
+            if (arrayOfChunks.length == 0) {allSegmentsAcked = true;} // if the file is empty, we are done
 
 
+            // set up UDP socket
+            serverIP = InetAddress.getByName(serverName);
+            udpSocketConnectingToServer = new DatagramSocket();
 
+            // set up timer
+            timer = new Timer(true);  // make the thread daemon
+
+            // start Ack receiving thread AckReceiver
+            AckReceiver ackReceivingThread = new AckReceiver(this);  // give this thread this FastClient object so it can access the methods
+            ackReceivingThread.start();
+
+            // YOU ARE ON STEP THREE OF THE ALGORITHM ON THE DESIGN NOTES
 
 
 
@@ -181,6 +203,72 @@ public class FastClient {
 
 
     }
+
+
+
+
+
+    public synchronized void processSend(Segment segment)
+    {
+        // add segment to the queue, send segment,
+        // set the state of segment in the queue as "sent" and
+        // schedule timer task for the segment
+    }
+
+
+    public synchronized void processAck(Segment ack)
+    {
+        // If ack belongs to the current sender window => set the
+        // state of segment in the transmission queue as
+        // "acknowledged". Also, until an unacknowledged
+        // segment is found at the head of the transmission
+        // queue, keep removing segments from the queue
+        // Otherwise => ignore ack
+
+        // check if the ack received is acking a segment in the current sender window
+        int ackNum = ack.getSeqNum();                         // the sequence number of the ack received
+        TxQueueNode test = senderQueue.getNode(ackNum);       // if the packet for that sequence number is not in the queue, null is returned
+
+        if (test == null)                // i.e. if the ack we received is not for a segment in the sender queue
+        {
+            return;                      // ignore ack
+        }
+
+        // if here, the ack received is for a segment which is in the queue and the node which holds that segment is held at the variable test
+
+        test.setStatus(TxQueueNode.ACKNOWLEDGED);         // Set the state of the segment in the queue as acknowledged
+
+        try
+        {
+            while(senderQueue.getHeadNode() != null && senderQueue.getHeadNode().getStatus() == TxQueueNode.ACKNOWLEDGED) // while the next segment at the
+            {                                                                                                             // head is acknowledged
+                senderQueue.remove();     // remove it
+            }
+        }
+        catch(InterruptedException e)
+        {
+            System.out.println("InterruptedException happened. Program will exit.");
+            System.exit(0);
+        }
+
+
+    }
+
+
+    public synchronized void processTime(int seqNum)
+    {
+        // Keeping track of timer tasks for each segment may
+        // be difficult. An easier way is to check whether the
+        // time-out happened for a segment that belongs
+        // to the current window and not yet acknowledged.
+        // If yes => then resend the segment and schedule
+        // timer task for the segment.
+        // Otherwise => ignore the time-out event.
+    }
+
+
+
+
 
     /**
      * A simple test driver
