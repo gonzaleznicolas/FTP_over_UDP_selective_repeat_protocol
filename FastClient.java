@@ -76,9 +76,8 @@ public class FastClient {
 
             // INITIAL HANDSHAKE OVER TCP
             tcpOutputStreamToServer.writeUTF(fileName);
-            System.out.println("hi");
+            tcpOutputStreamToServer.flush();
             byte response = tcpInputStreamFromServer.readByte();
-            System.out.println("hello");
             if (response != (byte) 0)
             {
                 System.out.println("An error occured establishing the TCP connection with the server");
@@ -204,7 +203,7 @@ public class FastClient {
         }
         catch (Exception e)
         {
-            System.out.println("An fatal error has occured (this one). The program will exit.");
+            System.out.println("An fatal error has occured. The program will exit.");
             System.exit(0);
         }
 
@@ -363,6 +362,8 @@ public class FastClient {
         System.out.printf("sending file \'%s\' to server...\n", file_name);
         ftp.send(file_name);
         System.out.println("file transfer completed.");
+        System.exit(0);
+
     }
 
 }
