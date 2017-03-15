@@ -220,6 +220,42 @@ public class FastClient {
         // add segment to the queue, send segment,
         // set the state of segment in the queue as "sent" and
         // schedule timer task for the segment
+
+        int sequenceNumber = segment.getSeqNum();
+
+        // add segment to the queue
+        try
+        {
+            senderQueue.add(segment);            
+        }
+        catch (InterruptedException e)
+        {
+            System.out.println("The method sending a segment was interrupted. The program will exit.");
+            System.exit(0);
+        }
+
+        // send the segment
+        DatagramPacket pktToSend = new DatagramPacket(segment.getBytes(), segment.getBytes().length, serverIP, serverPort);
+        try{ udpSocketConnectingToServer.send(pktToSend);}
+        catch (IOException e){ System.out.println("There was an excepion sending the packet."); System.exit(0);}
+
+        // set the state of the node to SENT
+        TxQueueNode node = senderQueue.getNode(sequenceNumber);
+        if (node == null)
+        {
+            // if null was returned it means Segment with sequence number sequenceNumber is not in the queue/window. this is unexpected
+            System.out.println("An unexpected error occured. The program will exit.");
+            System.exit(0);
+        }
+        else // node holds the node into which the segment we just sent was put
+        {
+            // set the state to SENT
+            node.setStatus(TxQueueNode.SENT);
+        }
+
+        // schedule timer task for this segment
+        TimeOutHandler toh = new TimeOutHandler(this, sequenceNumber);
+        timer.schedule(toh, timeOut);
     }
 
 
