@@ -237,9 +237,7 @@ public class FastClient {
         TxQueueNode test = senderQueue.getNode(ackNum);       // if the packet for that sequence number is not in the queue, null is returned
 
         if (test == null)                // i.e. if the ack we received is not for a segment in the sender queue
-        {
             return;                      // ignore ack
-        }
 
         // if here, the ack received is for a segment which is in the queue and the node which holds that segment is held at the variable test
 
@@ -287,7 +285,8 @@ public class FastClient {
             catch (IOException e){ System.out.println("There was an excepion sending the packet."); System.exit(0);}
 
             // schedule a timer task for the segment
-
+            TimeOutHandler toh = new TimeOutHandler(this, seqNum);
+            timer.schedule(toh, timeOut);
         }
     }
 
