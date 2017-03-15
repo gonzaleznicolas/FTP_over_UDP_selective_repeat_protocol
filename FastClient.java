@@ -179,31 +179,32 @@ public class FastClient {
             // of retransmitting the segment. we know we have arrayOfChunks.length segments to send
             for (int i = 0; i< arrayOfChunks.length; i++)
             {
+                Segment segToSend = new Segment(i, arrayOfChunks[i]);   // create segment to send
+                while(senderQueue.isFull()){} // while queue is full, do nothing
+                processSend(segToSend);
 
             }
 
+            while(!senderQueue.isEmpty()){} // while queue is not empty, wait. i.e. wait until the last few segments are acknowledged.
+            allSegmentsAcked = true; // set this flag so the AckReceiver will terminate
+
+            // DONE TRANSFERRING FILE, SEND END OF TRANSMISSION MESSAGE OVER TCP
+            System.out.println("\nDisconnecting...");
+            tcpOutputStreamToServer.writeByte(0);
+            tcpOutputStreamToServer.flush();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            // CLEANUP
+            timer.cancel();
+            tcpInputStreamFromServer.close();
+            tcpOutputStreamToServer.close();
+            tcpSocketConnectingToServer.close();
+            udpSocketConnectingToServer.close();
 
         }
         catch (Exception e)
         {
-            System.out.println("An fatal error has occured. The program will exit.");
+            System.out.println("An fatal error has occured (this one). The program will exit.");
             System.exit(0);
         }
 
