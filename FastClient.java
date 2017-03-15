@@ -3,7 +3,7 @@
  * FastClient implements a basic FTP application based on UDP data transmission and 
  * selective repeat rdt protocol
  * @author      Nicolas Gonzalez
- * @version     1.0, 12 Mar 2017
+ * @version     1.0, 14 Mar 2017
  *
  */
 
@@ -362,7 +362,7 @@ public class FastClient {
         System.out.printf("sending file \'%s\' to server...\n", file_name);
         ftp.send(file_name);
         System.out.println("file transfer completed.");
-
+        System.exit(0);
     }
 
 }
