@@ -12,4 +12,5 @@ The <loss> argument to the server is the proportion of packets which will be dro
 Client Usage:
 java FastClient <server-ip> <server-port> <file-name> <window-size>
 
+Server Usage:
 java -jar FastServer.jar <server-port> <window-size> <loss>
