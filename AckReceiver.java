@@ -36,8 +36,7 @@ public class AckReceiver extends Thread
             }
             catch (IOException e)
             {
-                System.out.println("An error occured receiving a Segment. The program will exit.");
-                System.exit(0);
+                // do nothing. this exception will be thrown when the udp socket is closed. i.e. the file transfer is done
             }
         }
     }
