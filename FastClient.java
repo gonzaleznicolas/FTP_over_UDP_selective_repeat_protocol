@@ -362,7 +362,6 @@ public class FastClient {
         System.out.printf("sending file \'%s\' to server...\n", file_name);
         ftp.send(file_name);
         System.out.println("file transfer completed.");
-        System.exit(0);
 
     }
 

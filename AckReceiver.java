@@ -36,8 +36,8 @@ public class AckReceiver extends Thread
             }
             catch (IOException e)
             {
-                //System.out.println("An error occured receiving a Segment. The program will exit.");
-                //System.exit(0);
+                System.out.println("An error occured receiving a Segment. The program will exit.");
+                System.exit(0);
             }
         }
     }
