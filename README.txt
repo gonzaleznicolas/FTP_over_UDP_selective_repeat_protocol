@@ -14,3 +14,5 @@ java FastClient <server-ip> <server-port> <file-name> <window-size>
 
 Server Usage:
 java -jar FastServer.jar <server-port> <window-size> <loss>
+
+**See AssignmentDescription.pdf
